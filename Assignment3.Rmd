@@ -1,0 +1,124 @@
+---
+title: "Assignment 3"
+author: 'Team 2: Riti Dabas, Anoushka Mahar, Dylan Koury'
+date: "11/17/2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summary
+
+5 Sentences - incl. Business Problem, Approach, and Recommendation
+
+# Analysis
+Explain Approach, List and explain alternative options
+
+## Option 1
+
+```{r echo=FALSE}
+setwd("C:/Users/dylan/MSBA/SM/Assignments")
+lbrHrs <- 1000
+lbrCost <- 140
+Mths <- 24
+MonthlyCost <- lbrHrs*lbrCost
+Op1Rev <- 155000
+Op1Prof <- Op1Rev - MonthlyCost
+DiscRate <- .005
+#install.packages("FinCal")
+library(FinCal)
+Op1EV <- pv.annuity(r=DiscRate,n=Mths,pmt=-Op1Prof, type=0)
+Op1EV <- Op1Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
+```
+
+The first option is just monthly payments of `{r Op1Rev}` dollars. In order to get the expected value we must first find the monthly profit based on the monthly cost. With a cost of labor of `{r lbrCost}` dollars and Appshop working `{r lbrHrs}` hours a month, the monthly cost of this project would be `{r MonthlyCost}` dollars. This means that given this option's payment plan, Appshop's profit would be `{r Op1Prof}` dollars. 
+
+The next step would be to find the present value of this annuity. Using Appshop's monthly discount rate of `{r DiscRate*100}`%, the expected value for this option is `{r round(Op1EV)}`.
+
+## Option 2
+
+```{r echo=FALSE}
+Op2Rev <- 125000
+Op2Prof <- Op2Rev - MonthlyCost
+Bonus <- 1500000
+PBonus <- .7
+DiscAnnual <- .0617 
+EVBonus <- pv(r=DiscAnnual,n=2,fv=-Bonus, type=0)
+
+Op2EVRev <- pv.annuity(r=DiscRate,n=Mths,pmt=-Op2Prof, type=0)
+Op2EVRev <- Op2Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
+Op2EV <- Op2EVRev + PBonus*(EVBonus)
+```
+
+The second option would give us the same monthly costs, but with a lower monthly revenue of `{r Op2Rev}` dollars, which is less than our monthly costs of `{r MonthlyCost}` meaning we have a net loss of `{r Op2Prof}` dollars. Discounting this to the present value the net loss is `{r round(Op2EVRev)}` dollars.
+
+Besides a lower monthly revenue, this option offers a bonus at the end of the `{r Mths}` months if the work is completed with commendable performance. The bonus is worth `{r Bonus/1000000}` million dollars. Appshop believes they have a `{r PBonus*100}`% chance of receiving this bonus. Discounting to the present day with an annual rate of `{r DiscAnnual*100}`%, this bonus is worth `{r round(EVBonus, digits=0)}` dollars.
+
+With a `{r PBonus*100}`% chance of receiving the bonus, the total expected value is `{r round(Op2EV)}` dollars. While this is higher than the expected value for the first option, with a `{(1-PBonus)*100}`% chance of not getting the bonus, choosing this option may result in a net loss. 
+
+## Option 3
+
+```{r echo=FALSE}
+Op3Rev <- 150000
+Op3Prof <- Op3Rev - MonthlyCost
+PWin <- .45
+SavingsLow <- 3200000
+SavingsLikely <- 5600000
+SavingsHigh <- 12800000
+Mil4 <- 4000000
+Mil6 <- 6000000
+Mil8 <- 8000000
+
+
+Op3EVRev <- pv.annuity(r=DiscRate,n=Mths,pmt=-Op3Prof, type=0)
+Op3EVRev <- Op3Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
+
+rep = 100000
+library(triangle)
+savings <- rtriangle(n=rep,a=SavingsLow,b=SavingsHigh,c=SavingsLikely)
+shares <- c()
+for (i in savings) {
+  if (i < Mil4) {
+    shares <- c(shares, 0)
+  } else if (i < Mil6) {
+    shares <- c(shares, (i-Mil4)*.2)
+  } else if (i < Mil8) {
+    shares <- c(shares, 400000 + (i-Mil6)*.4)
+  } else {c(shares, 1200000 + (i-Mil8)*.6)}
+}
+AvgShares <- mean(shares)
+EVShares <- pv(r=DiscAnnual,n=2, fv=-AvgShares, type=0)
+Op3EV <- PWin*(Op3EVRev + EVShares)
+```
+
+The final option requires Appshop to make a bid against competing offers. They plan to offer to complete the project for `{r Op3Rev}` dollars a month, giving them a monthly profit of `{r Op3Prof}` dollars. Discounted to the present, that is `{r round(Op3EVRev)}` dollars. Appshop believes that given their bidding strategy they have a `{PWin*100}`% chance of winning the bid.
+
+However, there is a possibility to receive a greater expected value depending on the realized savings their project will offer the client. In the illustrations section is a table describing the share of savings the winning bidder can expect given the realized savings of the project.
+
+Forecasting the potential savings of this project, Appshop predicts a low of `{r SavingsLow/1000000}` million dollars, a high of `{r SavingsHigh/1000000}` million dollars, and a most likely value of `{r SavingsLikely/1000000}` million dollars. 
+
+In order to estimate the expected value of the share of savings given this triangle distribution, we simulated `{r rep}` trial outcomes. We found that the average savings were about `{r round(mean(savings))}` dollars, giving an average share of savings of `{r round(AvgShares)}` dollars. Discounted to the present that is `{r round(EVShares)}` dollars. Given the probability of winning the bid, the expected value of this option is `{r round(Op3EV)}` dollars.
+
+# Illustration
+
+### Share of Savings Table
+
+![ShareofSavings](ShareofSavings.jpeg)
+
+### Histogram of Savings
+```{r savings, echo=FALSE}
+hist(savings/1000000, xlab="Savings (in $ millions)", main = "AppShop Project Savings", col="dodgerblue1")
+```
+
+### Histogram of Share of Savings
+```{r shares, echo=FALSE}
+hist(shares, xlab="Share of Savings (in dollars)", main = "AppShop Share of Savings", col="dodgerblue1")
+```
+
+### Decision tree
+
+# Conclusion
+
+Recommendation and pitfalls in analysis, discuss risks taken
