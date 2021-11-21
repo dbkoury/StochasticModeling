@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Summary
-
-5 Sentences - incl. Business Problem, Approach, and Recommendation
+The business problem in this case study was that a company named Appshop is not sure of how to implement the financials of their OS-7 project, which extends to seven different locations of their client. Their options include taking a lower 24 months revenue that they proposed, an even lower monthly revenue with a potential added bonus and to make a bid with competing offers. We used the illustration of decision trees, equipping each option's expected value with its present value and running a simulation to get the most applicable and helpful data to solve our business problem. Our recommendation would highly depend on whether Appshop is a risk-taker or risk-averse. If Appshop is willing to be risk-taking, then we would advise them to consider Option 2 which includes taking the lowest monthly revenue with added bonus. However, if Appshop is risk-aversive, then it is recommended that they consider Option 1 which simply consist of receiving of a higher monthly revenue than Option 2. 
 
 # Analysis
-Explain Approach, List and explain alternative options
+As previously mentioned, we have three options, Options 1,2 and 3. In Option 1, we simply have 24 months revenue of 155,000 dollars. We calculated the present value of all the revenue we would receive from this option using the FinCal package and put it as our expected value to get a better understanding of the revenue value. In Option 2, we did the similar procedure, however we multiplied the possibility of getting a bonus with the bonus's present value because we know that getting the bonus after the 24 months interval is not a guarenteed payment. Lastly, we ran a simulation for Option 3 where we took the potential payoffs in the bid and inserted them in a triangular distribution. Then, we took the average all the values we got from the simulation and added them to our present expected value. 
+
 
 ## Option 1
 
@@ -120,5 +120,5 @@ hist(shares, xlab="Share of Savings (in dollars)", main = "AppShop Share of Savi
 ### Decision tree
 
 # Conclusion
-
-Recommendation and pitfalls in analysis, discuss risks taken
+As previously mentioned, our recommendation would depend on whether Appshop is risk-taking or risk-aversive. If Appshop is risk-taking, then it is recommended that they go with Option 2 with the monthly revenue of 125,000 dollars and a potential added bonus of 1.5 million dollars after 24 months. However, if Appshop is risk-aversive, then they should take Option 1, monthly revenue of 155,000 dollars. 
+Since we are using predictive analysis, where we take data from previous experience and judgement and use them to solve a new current problem, there are bound to some pitfalls which would potentially decrease the accuracy of our analysis. Firstly, if we are using numbers that include finding the probability to receive bonuses or forecasting client's savings, large amount of relevant data is required to get a good result. And a lot of times, especially Appshop who does not seem to be as big and resourceful as its Big-4 competitors, big data sets are hard to come by. Additionally there are other variables that were not covered or were not known to Appshop, such as the true client savings, a new potential competitor who can outbid Appshop etc. 
