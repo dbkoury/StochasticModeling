@@ -98,31 +98,32 @@ Op3EV <- PWin*(Op3EVRev + EVShares)
 ```
 The final option requires Appshop to make a bid against competing offers. They plan to offer to complete the project for `r Op3Rev` dollars a month, giving them a monthly profit of `r Op3Prof` dollars. Discounted to the present, that is `r round(Op3EVRev)` dollars. Appshop believes that given their bidding strategy they have a `r PWin*100`% chance of winning the bid.
 
-However, there is a possibility to receive a greater expected value depending on the realized savings their project will offer the client. In the illustrations section is a table describing the share of savings the winning bidder can expect given the realized savings of the project.
+However, there is a possibility to receive a greater expected value depending on the realized savings their project will offer the client. In the appendix is a table describing the share of savings the winning bidder can expect given the realized savings of the project.
 
 Forecasting the potential savings of this project, Appshop predicts a low of `r SavingsLow/1000000` million dollars, a high of `r SavingsHigh/1000000` million dollars, and a most likely value of `r SavingsLikely/1000000` million dollars. 
 
 In order to estimate the expected value of the share of savings given this triangle distribution, we simulated `r rep` trial outcomes. We found that the average savings were about `r round(mean(savings))` dollars, giving an average share of savings of `r round(AvgShares)` dollars. Discounted to the present that is `r round(EVShares)` dollars. Given the probability of winning the bid, the expected value of this option is `r round(Op3EV)` dollars.
 
 # Illustration
-### Share of Savings
-
-![](ShareofSavings.jpeg)
-```{r savings, echo=FALSE}
-hist(savings/1000000, xlab="Savings (in $ millions)", main = "AppShop Project Savings", col="dodgerblue1")
-```
-```{r shares, echo=FALSE}
-hist(shares, xlab="Share of Savings (in dollars)", main = "AppShop Share of Savings", col="dodgerblue1")
-```
-
-### Decision tree
-![](DecisionTree.PNG)
+![Decision Tree](DecisionTree.PNG)
 
 # Conclusion
-Our recommendation is for Appshop to choose the contract with the bonus, given that is has the highest expected value. Despite this, we must acknowledge that there is still a `r (1-PBonus)*100`% chance of walking away with a net loss of `r Op2EVRev` dollars. This recommendation assumes that Appshop is risk-neutral. If Appshop is more risk-averse, they may feel safer taking Option 1 which guarantees a positive net return. However, if Appshop were more risk-savvy they may be inclined to choose Option 3, with a `r (1-PWin)*100`% chance of walking away with nothing. In this case, they are more likely to win a coin toss. However, despite a `r (PBonus-PWin)*100`% lower probability of a net gain than our current recommendation, option 3 does have the highest maximum revenue possible of `r round(pv(fv=(SavingsHigh-Mil8)*0.6 + 1200000,n=2,r=DiscAnnual,type=0) + Op3EVRev)`. 
+Our recommendation is for Appshop to choose the contract with the bonus, given that is has the highest expected value. Despite this, we must acknowledge that there is still a `r (1-PBonus)*100`% chance of walking away with a net loss of `r Op2EVRev` dollars. This recommendation assumes that Appshop is risk-neutral. If Appshop is more risk-averse, they may feel safer taking Option 1 which guarantees a positive net return. However, if Appshop were more risk-savvy they may be inclined to choose Option 3, with a `r (1-PWin)*100`% chance of walking away with nothing. In this case, they are more likely to win a coin toss. However, despite a `r (PBonus-PWin)*100`% lower probability of a net gain than our current recommendation, option 3 does have the highest maximum revenue possible of `r round(pv(fv=-(SavingsHigh-Mil8)*0.6 + 1200000,n=2,r=DiscAnnual,type=0) + Op3EVRev)` dollars. 
 
 Another pitfall depends on the accuracy of our data. We are relying on the accuracy of numbers provided by Appshop to make our recommendations. Should the company's actual chances of winning the bid be higher, or perhaps their chances of getting the bonus be lower, our recommendation may have been different. We have been provided no information with regard to how these numbers were calculated or any confidence interval with which to allow for sensitivity analysis. 
 
 For example, our estimation of Option 3's expected value relies on the most amount of unknown factors. Appshop's distribution of the project's potential savings significantly contributed to the expected value. Should Appshop be underestimating the true extent of savings their project would offer their client, the ultimate payout may actually exceed that of our recommended option.
 
 We must also consider that there are other variables that were not covered or were not known to Appshop, such as the true client savings mentioned previously or a new potential competitor who can outbid Appshop. It is imperative to look at the pitfalls of this analysis as this recommendation would have Appshop take significant risks, especially considering the possibility of a severe loss. In addition to company's resources spent on the OS-7 project, Clark's compensation and workers' hourly revenue depend on the financial performance of this project.
+
+# Appendix
+
+![Share of Savings](ShareofSavings.jpeg)
+
+```{r savings, echo=FALSE}
+hist(savings/1000000, xlab="Savings (in $ millions)", main = "AppShop Project Savings", col="dodgerblue1")
+```
+
+```{r shares, echo=FALSE}
+hist(shares, xlab="Share of Savings (in dollars)", main = "AppShop Share of Savings", col="dodgerblue1")
+```
