@@ -7,19 +7,26 @@ output: word_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/dylan/MSBA/SM/Assignments')
 ```
 
 # Summary
-The business problem in this case study was that a company named Appshop is not sure of how to implement the financials of their OS-7 project, which extends to seven different locations of their client. Their options include taking a lower 24 months revenue that they proposed, an even lower monthly revenue with a potential added bonus and to make a bid with competing offers. We used the illustration of decision trees, equipping each option's expected value with its present value and running a simulation to get the most applicable and helpful data to solve our business problem. Our recommendation would highly depend on whether Appshop is a risk-taker or risk-averse. If Appshop is willing to be risk-taking, then we would advise them to consider Option 2 which includes taking the lowest monthly revenue with added bonus. However, if Appshop is risk-aversive, then it is recommended that they consider Option 1 which simply consist of receiving of a higher monthly revenue than Option 2. 
+A company named Appshop is trying to decide the most lucrative contract terms for a new project opportunity, which requires them to implement Oracle software in seven international locations for their client. Their options include taking a lower monthly revenue than they originally proposed in the contract, an even lower monthly revenue with a potential added bonus, and to make a bid with competing offers. To help inform this problem, we built a decision tree outlining the potential options, and used this model to help calculate the expected value of each option with present value formulas, and in one case a simulation. Given this approach, we recommend that Appshop take Option 2: the bonus.
 
 # Analysis
-As previously mentioned, we have three options, Options 1,2 and 3. In Option 1, we simply have 24 months revenue of 155,000 dollars. We calculated the present value of all the revenue we would receive from this option using the FinCal package and put it as our expected value to get a better understanding of the revenue value. In Option 2, we did the similar procedure, however we multiplied the possibility of getting a bonus with the bonus's present value because we know that getting the bonus after the 24 months interval is not a guarenteed payment. Lastly, we ran a simulation for Option 3 where we took the potential payoffs in the bid and inserted them in a triangular distribution. Then, we took the average all the values we got from the simulation and added them to our present expected value. 
+As previously mentioned, we have three options. In order to determine which option is best, we must calculate the expected payout in terms of present net value.
+
+Option 1 offers a monthly revenue of 155,000 dollars. We calculated the present value of all the revenue Appshop would receive from this option using the FinCal package.
+
+Option 2 offers a lower monthly revenue of 125,000 dollars, however depending on Appshop's performance they may earn an added bonus of 1.5 million dollars. Like the first option, we calculated the present value of the monthly revenue, however we also multiplied the possibility of getting a bonus with the bonus's present value given it is not a guaranteed payout.
+
+Option 3 requires Appshop to bid for the contract against competitors. They plan to offer 150,000 dollars as a Request for Proposal. Should they get the bid, Appshop would also qualify for a potential additional revenue depending on the realized savings their project would offer the client. We ran a simulation estimating the projects potential savings using a triangular distribution and calculating the potential added revenue. Then, we found the average present value of this revenue and combined it with the present value of the monthly revenue. This value was multiplied by Appshop's probability of winning the bid.
 
 
 ## Option 1
-
 ```{r echo=FALSE}
-setwd("C:/Users/dylan/MSBA/SM/Assignments")
+#setwd("C:/Users/dylan/MSBA/SM/Assignments")
+options(scipen = 100)
 lbrHrs <- 1000
 lbrCost <- 140
 Mths <- 24
@@ -32,13 +39,11 @@ library(FinCal)
 Op1EV <- pv.annuity(r=DiscRate,n=Mths,pmt=-Op1Prof, type=0)
 Op1EV <- Op1Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
 ```
+The first option is just monthly payments of `r Op1Rev` dollars. In order to get the expected value we must first find the monthly profit based on the monthly cost. With a cost of labor of `r lbrCost` dollars and Appshop working `r lbrHrs` hours a month, the monthly cost of this project would be `r MonthlyCost` dollars. This means that given this option's payment plan, Appshop's profit would be `r Op1Prof` dollars. 
 
-The first option is just monthly payments of `{r Op1Rev}` dollars. In order to get the expected value we must first find the monthly profit based on the monthly cost. With a cost of labor of `{r lbrCost}` dollars and Appshop working `{r lbrHrs}` hours a month, the monthly cost of this project would be `{r MonthlyCost}` dollars. This means that given this option's payment plan, Appshop's profit would be `{r Op1Prof}` dollars. 
-
-The next step would be to find the present value of this annuity. Using Appshop's monthly discount rate of `{r DiscRate*100}`%, the expected value for this option is `{r round(Op1EV)}`.
+The next step would be to find the present value of this annuity. Using Appshop's monthly discount rate of `r DiscRate*100`%, the expected value for this option is `r round(Op1EV)`.
 
 ## Option 2
-
 ```{r echo=FALSE}
 Op2Rev <- 125000
 Op2Prof <- Op2Rev - MonthlyCost
@@ -51,15 +56,13 @@ Op2EVRev <- pv.annuity(r=DiscRate,n=Mths,pmt=-Op2Prof, type=0)
 Op2EVRev <- Op2Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
 Op2EV <- Op2EVRev + PBonus*(EVBonus)
 ```
+The second option would give us the same monthly costs, but with a lower monthly revenue of `r Op2Rev` dollars, which is less than our monthly costs of `r MonthlyCost` meaning we have a net loss of `r Op2Prof` dollars. Discounting this to the present value the net loss is `r round(Op2EVRev)` dollars.
 
-The second option would give us the same monthly costs, but with a lower monthly revenue of `{r Op2Rev}` dollars, which is less than our monthly costs of `{r MonthlyCost}` meaning we have a net loss of `{r Op2Prof}` dollars. Discounting this to the present value the net loss is `{r round(Op2EVRev)}` dollars.
+Besides a lower monthly revenue, this option offers a bonus at the end of the `r Mths` months if the work is completed with commendable performance. The bonus is worth `r Bonus/1000000` million dollars. Appshop believes they have a `r PBonus*100`% chance of receiving this bonus. Discounting to the present day with an annual rate of `r DiscAnnual*100`%, this bonus is worth `r round(EVBonus, digits=0)` dollars.
 
-Besides a lower monthly revenue, this option offers a bonus at the end of the `{r Mths}` months if the work is completed with commendable performance. The bonus is worth `{r Bonus/1000000}` million dollars. Appshop believes they have a `{r PBonus*100}`% chance of receiving this bonus. Discounting to the present day with an annual rate of `{r DiscAnnual*100}`%, this bonus is worth `{r round(EVBonus, digits=0)}` dollars.
-
-With a `{r PBonus*100}`% chance of receiving the bonus, the total expected value is `{r round(Op2EV)}` dollars. While this is higher than the expected value for the first option, with a `{(1-PBonus)*100}`% chance of not getting the bonus, choosing this option may result in a net loss. 
+With a `r PBonus*100`% chance of receiving the bonus, the total expected value is `r round(Op2EV)` dollars. While this is higher than the expected value for the first option, with a `r (1-PBonus)*100`% chance of not getting the bonus, choosing this option may result in a net loss. 
 
 ## Option 3
-
 ```{r echo=FALSE}
 Op3Rev <- 150000
 Op3Prof <- Op3Rev - MonthlyCost
@@ -77,6 +80,7 @@ Op3EVRev <- Op3Prof*((1-(1+DiscRate)^-Mths)/DiscRate)
 
 rep = 100000
 library(triangle)
+set.seed(123)
 savings <- rtriangle(n=rep,a=SavingsLow,b=SavingsHigh,c=SavingsLikely)
 shares <- c()
 for (i in savings) {
@@ -86,44 +90,39 @@ for (i in savings) {
     shares <- c(shares, (i-Mil4)*.2)
   } else if (i < Mil8) {
     shares <- c(shares, 400000 + (i-Mil6)*.4)
-  } else {c(shares, 1200000 + (i-Mil8)*.6)}
+  } else {shares <- c(shares, 1200000 + (i-Mil8)*.6)}
 }
 AvgShares <- mean(shares)
 EVShares <- pv(r=DiscAnnual,n=2, fv=-AvgShares, type=0)
 Op3EV <- PWin*(Op3EVRev + EVShares)
 ```
-
-The final option requires Appshop to make a bid against competing offers. They plan to offer to complete the project for `{r Op3Rev}` dollars a month, giving them a monthly profit of `{r Op3Prof}` dollars. Discounted to the present, that is `{r round(Op3EVRev)}` dollars. Appshop believes that given their bidding strategy they have a `{PWin*100}`% chance of winning the bid.
+The final option requires Appshop to make a bid against competing offers. They plan to offer to complete the project for `r Op3Rev` dollars a month, giving them a monthly profit of `r Op3Prof` dollars. Discounted to the present, that is `r round(Op3EVRev)` dollars. Appshop believes that given their bidding strategy they have a `r PWin*100`% chance of winning the bid.
 
 However, there is a possibility to receive a greater expected value depending on the realized savings their project will offer the client. In the illustrations section is a table describing the share of savings the winning bidder can expect given the realized savings of the project.
 
-Forecasting the potential savings of this project, Appshop predicts a low of `{r SavingsLow/1000000}` million dollars, a high of `{r SavingsHigh/1000000}` million dollars, and a most likely value of `{r SavingsLikely/1000000}` million dollars. 
+Forecasting the potential savings of this project, Appshop predicts a low of `r SavingsLow/1000000` million dollars, a high of `r SavingsHigh/1000000` million dollars, and a most likely value of `r SavingsLikely/1000000` million dollars. 
 
-In order to estimate the expected value of the share of savings given this triangle distribution, we simulated `{r rep}` trial outcomes. We found that the average savings were about `{r round(mean(savings))}` dollars, giving an average share of savings of `{r round(AvgShares)}` dollars. Discounted to the present that is `{r round(EVShares)}` dollars. Given the probability of winning the bid, the expected value of this option is `{r round(Op3EV)}` dollars.
+In order to estimate the expected value of the share of savings given this triangle distribution, we simulated `r rep` trial outcomes. We found that the average savings were about `r round(mean(savings))` dollars, giving an average share of savings of `r round(AvgShares)` dollars. Discounted to the present that is `r round(EVShares)` dollars. Given the probability of winning the bid, the expected value of this option is `r round(Op3EV)` dollars.
 
 # Illustration
+### Share of Savings
 
-### Share of Savings Table
-
-![ShareofSavings](ShareofSavings.jpeg)
-
-### Histogram of Savings
+![](ShareofSavings.jpeg)
 ```{r savings, echo=FALSE}
 hist(savings/1000000, xlab="Savings (in $ millions)", main = "AppShop Project Savings", col="dodgerblue1")
 ```
-
-### Histogram of Share of Savings
 ```{r shares, echo=FALSE}
 hist(shares, xlab="Share of Savings (in dollars)", main = "AppShop Share of Savings", col="dodgerblue1")
 ```
 
 ### Decision tree
+![](DecisionTree.PNG)
 
 # Conclusion
-As previously mentioned, our recommendation would depend on whether Appshop is risk-taking or risk-aversive. If Appshop is risk-taking, then it is recommended that they go with Option 2 with the monthly revenue of 125,000 dollars and a potential added bonus of 1.5 million dollars after 24 months. However, if Appshop is risk-aversive, then they should take Option 1, monthly revenue of 155,000 dollars. 
-Since we are using predictive analysis, where we take data from previous experience and judgement and use them to solve a new current problem, there are bound to some pitfalls which would potentially decrease the accuracy of our analysis. 
-Firstly, if we are using the numbers that include finding the probability to receive bonuses or forecasting client's savings, large amount of relevant data is required to get a good result. And a lot of times, big data sets are hard to come by. Secondly, we have to condider that the expected value of both Option 2 and 3 pull are derived based on assumptions of probabilities. 
-Option 2: If pursued, there is a `{(1-PBonus)*100}`% chance of ending up with a net loss of `{r round(Op2EVRev)}` dollars. 
-Option 3: If pursued, there is a massive dependency on the team's consensus estimate of Appshop's chances of winning the RFP at the $150,000 bid with `{PWin*100}`%. The `{PWin*100}`% probability of winning the bid in itself is less favorable than a fair coin toss which makes this option suboptimal for a risk-averse client.
-We have to consider the above mentioned weightage of assumed probabilities in our derivation of expected values when choosing our potential option, because although the overall expected value of the options seem profitable, it would distort our expected profits because the results are derived on the basis of assumptions and it ignores the impact of the inevitable variations. Additionaly, it also brings along a level of risk which may be undersirable. 
-One must also note that there are other variables that were not covered or were not known to Appshop, such as the true client savings, a new potential competitor who can outbid Appshop, etc. It is imperative to look at the pitfalls of the analysis as Appshop is taking significant risks, such as having the team and company go through so many work hours with the possibility of a loss (Option 2 with no bonus). In addition to company's resources spent on the OS-7 project, Clark's compensation and workers' hourly revenue depends on the financial performance in this project.
+Our recommendation is for Appshop to choose the contract with the bonus, given that is has the highest expected value. Despite this, we must acknowledge that there is still a `r (1-PBonus)*100`% chance of walking away with a net loss of `r Op2EVRev` dollars. This recommendation assumes that Appshop is risk-neutral. If Appshop is more risk-averse, they may feel safer taking Option 1 which guarantees a positive net return. However, if Appshop were more risk-savvy they may be inclined to choose Option 3, with a `r (1-PWin)*100`% chance of walking away with nothing. In this case, they are more likely to win a coin toss. However, despite a `r (PBonus-PWin)*100`% lower probability of a net gain than our current recommendation, option 3 does have the highest maximum revenue possible of `r round(pv(fv=(SavingsHigh-Mil8)*0.6 + 1200000,n=2,r=DiscAnnual,type=0) + Op3EVRev)`. 
+
+Another pitfall depends on the accuracy of our data. We are relying on the accuracy of numbers provided by Appshop to make our recommendations. Should the company's actual chances of winning the bid be higher, or perhaps their chances of getting the bonus be lower, our recommendation may have been different. We have been provided no information with regard to how these numbers were calculated or any confidence interval with which to allow for sensitivity analysis. 
+
+For example, our estimation of Option 3's expected value relies on the most amount of unknown factors. Appshop's distribution of the project's potential savings significantly contributed to the expected value. Should Appshop be underestimating the true extent of savings their project would offer their client, the ultimate payout may actually exceed that of our recommended option.
+
+We must also consider that there are other variables that were not covered or were not known to Appshop, such as the true client savings mentioned previously or a new potential competitor who can outbid Appshop. It is imperative to look at the pitfalls of this analysis as this recommendation would have Appshop take significant risks, especially considering the possibility of a severe loss. In addition to company's resources spent on the OS-7 project, Clark's compensation and workers' hourly revenue depend on the financial performance of this project.
