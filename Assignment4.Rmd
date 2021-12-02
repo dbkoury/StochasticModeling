@@ -9,11 +9,6 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo=FALSE}
-library(tidyverse)
-read_csv("avocado.csv")
-```
-
 ##Part 1
 ```{r, echo=F}
 PStar = 1.5 #Long run equilibrium price
@@ -33,8 +28,8 @@ for (i in 1:n) {
 
 ##Part 2
 ```{r, echo=FALSE}
-plot(Prices[1:50], main="First 50 Prices", ylab="Price", xlab="Time (unspecified)")
-abline(h=mean(Prices[1:50]), col="blue")
+plot(ts(Prices[1:50]), main="First 50 Prices", ylab="Price", xlab="Time (unspecified)")
+abline(h=mean(Prices[1:50]), col="dark green")
 ```
 Looking at the graph, the prices appear stationary as there is an even distributon around the mean across all 50 temporal points.
 
@@ -51,4 +46,32 @@ Pacf(Prices,main="MA(1), theta=0.05", lag.max=10)
 The ACF shows us that there are at least 4 statistically significant correlations with a couple borderline correlations. These 
 
 #Part 4
+```{r, echo=FALSE}
+library(dynlm)
+options(scipen=999)
+PricesTS <- dynlm(Prices~L(Prices,-1))
+summary(PricesTS)
+```
+INTERCEPT: -0.00000000000000255795 
+SLOPE: 1.00000000000000177636 
+
+##Part 5
+```{r, echo=FALSE}
+library(tidyverse)
+avocado <- read_csv("avocado.csv")
+Avocado_Prices <- ts(avocado$Avocado_Prices,frequency=52,start=c(2018,1))
+```
+
+##Part 6
+```{r, echo=FALSE}
+plot(Avocado_Prices, xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-20)")
+abline(h=mean(Avocado_Prices),col="dark green")
+
+```
+
+
+
+
+
+
 
