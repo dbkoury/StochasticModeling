@@ -1,0 +1,54 @@
+---
+title: "Assignment4"
+author: 'Team 2: Riti Dabas, Anoushka Mahar, Dylan Koury'
+date: "12/2/2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+library(tidyverse)
+read_csv("avocado.csv")
+```
+
+##Part 1
+```{r, echo=F}
+PStar = 1.5 #Long run equilibrium price
+Phi = -0.4 #Persistence factor
+n = 10000 #number of prices
+meanEr = 0 #Mean error
+stdDvEr = 0.08 #Std Deviation error
+error = rnorm(n=n, mean = meanEr, sd=stdDvEr)
+Prices = c() #List of prices
+P0 = PStar #Setting initial price to equilibrium price
+for (i in 1:n) {
+  pt = PStar*(1-Phi) + Phi*P0 + error[i]
+  Prices = c(Prices, pt)
+  P0 = pt
+}
+```
+
+##Part 2
+```{r, echo=FALSE}
+plot(Prices[1:50], main="First 50 Prices", ylab="Price", xlab="Time (unspecified)")
+abline(h=mean(Prices[1:50]), col="blue")
+```
+Looking at the graph, the prices appear stationary as there is an even distributon around the mean across all 50 temporal points.
+
+DISCUSS HOW PROCESS WOULD CHANGE WITH PHI 0 OR 1
+
+HOW EFFECTIVE CAN WE BE AT PREDICTING PRICES IN THESE CASES
+
+##Part 3
+```{r, echo=FALSE}
+library(forecast)
+Acf(Prices,main="MA(1), theta=0.05", lag.max=10)
+Pacf(Prices,main="MA(1), theta=0.05", lag.max=10)
+```
+The ACF shows us that there are at least 4 statistically significant correlations with a couple borderline correlations. These 
+
+#Part 4
+
