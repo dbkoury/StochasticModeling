@@ -99,7 +99,7 @@ AvocadoPStar <- ar_1$coef[2] #/(1-AvocadoPhi) #Long Run Equilibrium Price
 AvocadoPriceSim <- ts(PriceSimulator(PStar=AvocadoPStar, Phi=AvocadoPhi, error=error),
                       frequency=52, start=c(2018,1))
 
-plot(AvocadoPriceSim, xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-20)")
+plot(ts(AvocadoPriceSim[1:50]), xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-20)")
 TimeMeanSim = mean(AvocadoPriceSim) #Time Mean
 abline(h=TimeMeanSim,col="dark green")
 
@@ -107,6 +107,22 @@ Acf(AvocadoPriceSim,lag.max = 10, plot=TRUE, type="correlation", ci=0.99)
 Pacf(AvocadoPriceSim,lag.max = 10, plot=TRUE, ci=0.99)
 ```
 ##Part10
+```{r, echo=FALSE}
+AvocadoResiduals <- ar_1$residuals
+Acf(AvocadoResiduals,lag.max = 10, plot=TRUE, type="correlation", ci=0.99)
+Pacf(AvocadoResiduals,lag.max = 10, plot=TRUE, ci=0.99)
+```
+##Part 11
+```{r, echo=FALSE}
+forecasts <- forecast(Avocado_Prices)$mean[1:5]
+```
+#Part 12
+```{r, echo=FALSE}
+plot(ts(c(Avocado_Prices,forecasts),frequency=52,start=c(2018,1)),ylab="Price ($)",main="Avocado Prices and Forecast")
+lines(ts(forecasts,frequency=52,start=c(2020,40)), col="red")
+abline(h=mean(c(Avocado_Prices,forecasts)),col="darkgreen")
+```
+
 
 
 
