@@ -68,7 +68,7 @@ SLOPE: `r PricesTS$coefficients[2]`
 ```{r, echo=FALSE, warning=FALSE}
 library(tidyverse)
 avocado <- read_csv("C:/Users/anous/Desktop/Stochastic/avocado.csv")
-Avocado_Prices <- ts(avocado$AveragePrice,frequency=52,start=c(2018,1))
+Avocado_Prices <- ts(avocado$Avocado_Prices,frequency=52,start=c(2018,1))
 ```
 
 ##Part 6
