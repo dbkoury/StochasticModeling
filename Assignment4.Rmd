@@ -9,8 +9,8 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Part 1
-```{r, echo=F}
+## Part 1
+```{r, echo=T}
 PStar = 1.5 #Long run equilibrium price
 Phi = -0.4 #Persistence factor
 n = 10000 #number of prices
@@ -33,20 +33,20 @@ Prices <- PriceSimulator(PStar,Phi,error)
 Generated 10,000 Prices by creating random shocks from a normal distribution with given parameters.
 
 
-##Part 2
-```{r, echo=FALSE}
+## Part 2
+```{r, echo=T}
 plot(ts(Prices[1:50]), main="First 50 Prices", ylab="Price", xlab="Time (unspecified)")
 abline(h=mean(Prices[1:50]), col="dark green")
 ```
 Looking at the graph, the prices appear stationary as there is an even distributon around the mean across all 50 temporal points.
 
-When phi = 0: the equation simplifies to PStar plus the error term, meaning that each year we can predict that the price will be generally around the long run equilibrium price. In fact, when we changed the value to zero, we saw the data centered around our long equilibrium price of `{r} PStar` with many back and forth fluxations, it does not stray too far for too long.
+When phi = 0: the equation simplifies to PStar plus the error term, meaning that each year we can predict that the price will be generally around the long run equilibrium price. In fact, when we changed the value to zero, we saw the data centered around our long equilibrium price of `r PStar` with many back and forth fluxations, it does not stray too far for too long.
 When phi = 1: The graph is still stationary but not at the long run equilibrium price. In fact when we changed the value of Phi we saw there was a mean of about 1.6 with a higher standard deviation and fewer fluxuations over the mean when compared to the Phi = 0 model, indicating this model is more likely to stray further from the mean. 
 Therefore,  Phi=0 is a better predictor and more effective on predicting the prices than when Phi=1, as we can use the long run equilibrium price as a fairly effective predictor. In fact, the long run equilibrium price is completely eliminated from the model when Phi = 1, and therefore cannot truly be used to accurately predict prices in this scenario.
 
 
-##Part 3
-```{r, echo=FALSE, warning=FALSE}
+## Part 3
+```{r, echo=T, warning=FALSE}
 library(forecast)
 Acf(Prices,lag.max = 10, plot=TRUE, type="correlation", ci=0.99)
 Pacf(Prices, lag.max=10, plot=TRUE, ci=0.99)
@@ -54,33 +54,35 @@ Pacf(Prices, lag.max=10, plot=TRUE, ci=0.99)
 The ACF shows us that there are 3 statistically significant correlations, with one borderline correlation. As the lag progresses, we see the spikes oscillate between negative and positive.
 This is an MA 3 process and the decaying pattern of PACF shows it's quick decay to zero after one negative spike.
 
-#Part 4
-```{r, echo=FALSE, warning=FALSE}
+## Part 4
+```{r, echo=T, warning=FALSE}
 library(dynlm)
 options(scipen=999)
 PricesTS <- dynlm(Prices~L(Prices,-1))
 summary(PricesTS)
 ```
 INTERCEPT: `r PricesTS$coefficients[1]`
+
 SLOPE: `r PricesTS$coefficients[2]`
 
-##Part 5
-```{r, echo=FALSE, warning=FALSE}
+## Part 5
+```{r, echo=T, warning=FALSE}
 library(tidyverse)
-avocado <- read_csv("C:/Users/anous/Desktop/Stochastic/avocado.csv")
+avocado <- read_csv("avocado.csv")
 Avocado_Prices <- ts(avocado$Avocado_Prices,frequency=52,start=c(2018,1))
 ```
 
-##Part 6
-```{r, echo=FALSE}
+## Part 6
+```{r, echo=T}
 plot(Avocado_Prices, xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-20)")
 TimeMean = mean(Avocado_Prices) #Time Mean
 abline(h=TimeMean,col="dark green")
 ```
-Time Mean: `{r} TimeMean`
 
-##Part 7
-```{r, echo=FALSE}
+Time Mean: `r TimeMean`
+
+## Part 7
+```{r, echo=T}
 Acf(Avocado_Prices,lag.max = 10, plot=TRUE, type="correlation", ci=0.99)
 Pacf(Avocado_Prices,lag.max = 10, plot=TRUE, ci=0.99)
 ```
@@ -88,18 +90,18 @@ Pacf(Avocado_Prices,lag.max = 10, plot=TRUE, ci=0.99)
 In part 3, both ACF and PACF plots showed an alternating decaying pattern; with three spikes in part 3 ACF plot. The decaying pattern was more visible in part 3 ACF whereas it is less prominent in part 7 ACF which consists of  all ten spikes. 
 PACF has one spike for both part 3 and 7; where part 3 PACF lacked a prominent decaying pattern. However the decaying pattern was more visible in part 7 even though it has at least 4 spikes. 
 
-##Part 8
-```{r, echo=FALSE}
+## Part 8
+```{r, echo=T}
 ar_1<-Arima(Avocado_Prices,order=c(1,0,0))
 (ar_1)
 AvocadoPhi <- ar_1$coef[1] #Phi
 AvocadoPStar <- ar_1$coef[2] #/(1-AvocadoPhi) #Long Run Equilibrium Price
 ```
 
-The suggested of Phi is  `r AvocadoPhi` "and the implied long run equilibrium price is "`r AvocadoPStar`
+The suggested of Phi is  `r AvocadoPhi` and the implied long run equilibrium price is `r AvocadoPStar`
 
-##Part 9
-```{r, echo=FALSE}
+## Part 9
+```{r, echo=T}
 AvocadoPriceSim <- ts(PriceSimulator(PStar=AvocadoPStar, Phi=AvocadoPhi, error=error),
                       frequency=52, start=c(2018,1))
 plot(ts(AvocadoPriceSim[1:50]), xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-20)")
@@ -113,8 +115,8 @@ Pacf(AvocadoPriceSim,lag.max = 10, plot=TRUE, ci=0.99)
 The ACF plot looks almost identical to that in part 7.
 The PACF plot for both have only one spike, negative for part 7 and positive for part 9. Another difference in the PACF plots is that the sticks are much closer to 0 for part 9.
 
-##Part10
-```{r, echo=FALSE}
+## Part10
+```{r, echo=T}
 AvocadoResiduals <- ar_1$residuals
 Acf(AvocadoResiduals,lag.max = 10, plot=TRUE, type="correlation", ci=0.99)
 Pacf(AvocadoResiduals,lag.max = 10, plot=TRUE, ci=0.99)
@@ -123,20 +125,24 @@ In ACF, the patterns shown in part 7 are not shown here. Part 7 had a lot of hig
 
 
 
-##Part 11
-```{r, echo=FALSE}
+## Part 11
+```{r, echo=T}
 forecasts <- forecast(Avocado_Prices)$mean[1:5]
 ```
 In the next 5 periods we predict prices of:
 1: `r forecasts[1]`
+
 2: `r forecasts[2]`
+
 3: `r forecasts[3]`
+
 4: `r forecasts[4]`
+
 5: `r forecasts[5]`
 
 
-#Part 12
-```{r, echo=FALSE}
+## Part 12
+```{r, echo=T}
 plot(ts(c(Avocado_Prices,forecasts),frequency=52,start=c(2018,1)),ylab="Price ($)",main="Avocado Prices and Forecast")
 lines(ts(forecasts,frequency=52,start=c(2020,40)), col="red")
 abline(h=mean(c(Avocado_Prices,forecasts)),col="darkgreen")
