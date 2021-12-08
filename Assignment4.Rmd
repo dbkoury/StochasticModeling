@@ -40,9 +40,9 @@ abline(h=mean(Prices[1:50]), col="dark green")
 ```
 Looking at the graph, the prices appear stationary as there is an even distributon around the mean across all 50 temporal points.
 
-When phi = 0: There is a lot more noise than when Phi=1; and it is stationary.
-When phi = 1: The graph resembles an AR model and is non-stationary.
-Therefore,  Phi=1 is a better predictor and more effective on predicting the prices than when Phi=0.
+When phi = 0: the equation simplifies to PStar plus the error term, meaning that each year we can predict that the price will be generally around the long run equilibrium price. In fact, when we changed the value to zero, we saw the data centered around our long equilibrium price of `{r} PStar` with many back and forth fluxations, it does not stray too far for too long.
+When phi = 1: The graph is still stationary but not at the long run equilibrium price. In fact when we changed the value of Phi we saw there was a mean of about 1.6 with a higher standard deviation and fewer fluxuations over the mean when compared to the Phi = 0 model, indicating this model is more likely to stray further from the mean. 
+Therefore,  Phi=0 is a better predictor and more effective on predicting the prices than when Phi=1, as we can use the long run equilibrium price as a fairly effective predictor. In fact, the long run equilibrium price is completely eliminated from the model when Phi = 1, and therefore cannot truly be used to accurately predict prices in this scenario.
 
 
 ##Part 3
@@ -61,8 +61,8 @@ options(scipen=999)
 PricesTS <- dynlm(Prices~L(Prices,-1))
 summary(PricesTS)
 ```
-INTERCEPT: -0.00000000000000255795 
-SLOPE: 1.00000000000000177636 
+INTERCEPT: `r PricesTS$coefficients[1]`
+SLOPE: `r PricesTS$coefficients[2]`
 
 ##Part 5
 ```{r, echo=FALSE, warning=FALSE}
@@ -77,7 +77,7 @@ plot(Avocado_Prices, xlab="Year", ylab="Price ($)", main="Avocado Prices (2018-2
 TimeMean = mean(Avocado_Prices) #Time Mean
 abline(h=TimeMean,col="dark green")
 ```
-Time Mean: `r TimeMean`
+Time Mean: `{r} TimeMean`
 
 ##Part 7
 ```{r, echo=FALSE}
@@ -127,7 +127,12 @@ In ACF, the patterns shown in part 7 are not shown here. Part 7 had a lot of hig
 ```{r, echo=FALSE}
 forecasts <- forecast(Avocado_Prices)$mean[1:5]
 ```
-
+In the next 5 periods we predict prices of:
+1: `r forecasts[1]`
+2: `r forecasts[2]`
+3: `r forecasts[3]`
+4: `r forecasts[4]`
+5: `r forecasts[5]`
 
 
 #Part 12
